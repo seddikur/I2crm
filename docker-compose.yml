@@ -1,0 +1,68 @@
+services:
+  # Веб-сервер с PHP 8.2 и предустановленными расширениями для Yii2
+  web:
+    image: yiisoftware/yii2-php:8.2-apache
+    container_name: yii2_web
+    volumes:
+      - .:/app
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - yii2-network
+    environment:
+      # Настройки для Yii2
+      YII_ENV: dev
+      YII_DEBUG: "true"
+    # Настройка Apache для Yii2
+    entrypoint: ["sh", "-c"]
+    command: >
+      "
+      a2enmod rewrite
+      && echo '<Directory /app>' > /etc/apache2/conf-available/yii2.conf
+      && echo '    Options Indexes FollowSymLinks' >> /etc/apache2/conf-available/yii2.conf
+      && echo '    AllowOverride All' >> /etc/apache2/conf-available/yii2.conf
+      && echo '    Require all granted' >> /etc/apache2/conf-available/yii2.conf
+      && echo '</Directory>' >> /etc/apache2/conf-available/yii2.conf
+      && a2enconf yii2.conf
+      && apache2-foreground
+      "
+
+  # База данных MySQL 5.7
+  db:
+    image: mysql:5.7
+    container_name: yii2_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: yii_basa
+      MYSQL_USER: user
+      MYSQL_PASSWORD: secret
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - yii2-network
+
+  # phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: yii2_phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    networks:
+      - yii2-network
+
+volumes:
+  mysql_data:
+
+networks:
+  yii2-network:
+    driver: bridge
