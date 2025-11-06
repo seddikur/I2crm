@@ -8,29 +8,39 @@
 * Запуск обновлений расширений yii2 `` composer update ``
 * Запуск миграций `` php yii migrate `` 
 
-## Добавить пользователей
-`` php yii user/init``
-После выполнения инициализации вы сможете войти в систему с учетными данными:
-* admin / admin
-* manager / manager
-* user / user
+# Шифрование файла
+``
+$encryptionStream = new \app\components\whatsapp\EncryptionStream([
+'source' => '/path/to/file.jpg',
+'mediaKey' => $mediaKey,
+'mediaType' => 'IMAGE'
+]);
+
+$encryptedData = $encryptionStream->getEncryptedData();
+``
 
 
-## Создание отдельного пользователя:
-``  php yii user/create <username> <email> <password> [role]``
+# Дешифрование файла  
+``
+$decryptionStream = new \app\components\whatsapp\DecryptionStream([
+'source' => '/path/to/file.jpg.encrypted',
+'mediaKey' => $mediaKey,
+'mediaType' => 'IMAGE'
+]);
 
-## Инициализация ролей RBAC:
-``  php yii rbac/init-rbac``
-Эта команда выполнит следующие действия:
-* Удалит все существующие роли и разрешения RBAC
-* Создаст правило AuthorRule для проверки владельца записи
-* Создаст необходимые разрешения (permissions) для системы
-* Создаст роли для admin, manager и user с правильной иерархией
-* Создаст трех пользователей с помощью UserInitializer
-* Назначит соответствующие роли этим пользователям  
-  После этого вы сможете войти в систему с учетными данными:
-* admin / admin
-* manager / manager
-* user / user  
-  И у каждого пользователя будут соответствующие права доступа согласно его роли.
+$decryptedData = $decryptionStream->getDecryptedData();
+``
+
+
+# Генерация sidecar
+``
+$sidecarGenerator = new \app\components\whatsapp\SideCarGenerator([
+'source' => '/path/to/video.mp4',
+'mediaKey' => $mediaKey,
+'mediaType' => 'VIDEO'
+]);
+
+$sidecarData = $sidecarGenerator->generate();
+``
+
 

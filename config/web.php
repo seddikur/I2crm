@@ -16,6 +16,9 @@ $config = [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'Dy9g110ExmRhPkECjJxnHCvk2vY4oRez',
         ],
+        'whatsappEncryption' => [
+            'class' => 'app\components\whatsapp\StreamEncrypter',
+        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
@@ -37,7 +40,7 @@ $config = [
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
+                    'levels' => ['error', 'warning','info'],
                 ],
             ],
         ],
